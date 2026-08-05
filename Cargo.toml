@@ -23,10 +23,10 @@ uuid = { version = "1.16", features = ["serde", "v4"] }
 which = "8.0"
 
 [target.'cfg(unix)'.dependencies]
-nix = { version = "0.30", features = ["process"] }
+nix = { version = "0.31.3", features = ["process"] }
 
 [target.'cfg(windows)'.dependencies]
-windows-sys = { version = "0.60", features = ["Win32_System_Threading"] }
+windows-sys = { version = "0.61.2", features = ["Win32_System_Threading"] }
 
 [dev-dependencies]
 assert_cmd = "2.0"

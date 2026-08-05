@@ -1,5 +1,12 @@
 # netbird-hawk
 
+<p align="center">
+  <img src="./brand/rufus-hawk-wimbledon.jpg" width="200"/>
+  <br>
+  This project is named after <a href="https://en.wikipedia.org/wiki/Rufus_the_Hawk">Rufus the Hawk</a>,
+  the bird of prey employed by Wimbledon to keep pigeons away from its tennis courts.
+</p>
+
 `netbird-hawk` is a per-user background daemon that rotates through an ordered
 list of NetBird profiles at a predictable local time. It makes a roughly daily
 SSO renewal window intentional instead of letting it drift into the workday.
@@ -141,3 +148,12 @@ cargo deny check licenses advisories sources
 
 See [DEPENDENCIES.md](DEPENDENCIES.md) for the dependency and NetBird CLI
 contract review.
+
+## Maintainers
+
+- [@KillWolfVlad](https://github.com/KillWolfVlad)
+
+## License
+
+This repository is released under version 2.0 of the
+[Apache License](https://www.apache.org/licenses/LICENSE-2.0).
