@@ -15,7 +15,17 @@ The daemon supports macOS, Linux, and Windows. It does not install a system
 service, require elevated privileges, manage NetBird credentials, or start
 automatically at boot/login.
 
-## Prerequisites and installation
+## Download
+
+Prebuilt binaries are available from
+[GitHub Releases](https://github.com/KillWolfVlad/netbird-hawk/releases) (the
+`SNAPSHOT` tag hosts the latest builds).
+
+Download the archive for your
+platform and install `netbird-hawk` (or `netbird-hawk.exe` on Windows) in a
+directory on your `PATH`.
+
+## Prerequisites and installation from source
 
 - A current Rust toolchain (edition 2024 support is required to build from source).
 - A supported NetBird client with the `netbird` executable on `PATH`.

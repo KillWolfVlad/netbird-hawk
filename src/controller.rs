@@ -406,6 +406,37 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn owned_lifetime_lock_drives_live_status_and_bounded_stop() {
+        let root = tempdir().unwrap();
+        let store = StateStore::under(root.path());
+        store.ensure_layout().unwrap();
+        let mut snapshot = RuntimeSnapshot::stopped();
+        snapshot.state = LifecycleState::Running;
+        snapshot.pid = Some(7);
+        store.write_runtime(&snapshot).unwrap();
+        let lifetime = store.try_lifetime_lock().unwrap().unwrap();
+        let controller = LifecycleController::new(store.clone(), NoopLauncher)
+            .with_timeouts(Duration::from_millis(20), Duration::from_millis(2));
+
+        assert!(store.daemon_is_live().unwrap());
+        assert!(controller.status().unwrap().starts_with("state: running"));
+        let started = std::time::Instant::now();
+        assert!(matches!(
+            controller.stop().await,
+            Err(HawkError::AcknowledgementTimeout { .. })
+        ));
+        assert!(started.elapsed() < Duration::from_secs(1));
+        assert_eq!(
+            store.read_control().unwrap().unwrap().desired,
+            DesiredRunState::Stopped
+        );
+        assert!(store.daemon_is_live().unwrap());
+
+        drop(lifetime);
+        assert_eq!(controller.status().unwrap(), "state: stopped");
+    }
+
+    #[tokio::test]
     async fn ready_acknowledgement_timeout_reports_failure() {
         let root = tempdir().unwrap();
         let store = StateStore::under(root.path());

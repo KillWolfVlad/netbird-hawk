@@ -180,7 +180,7 @@ impl StateStore {
         let file = open_private_lock_file(&path)?;
         match file.try_lock_exclusive() {
             Ok(()) => Ok(Some(FileLock { file })),
-            Err(error) if error.kind() == ErrorKind::WouldBlock => Ok(None),
+            Err(error) if lock_is_contended(&error) => Ok(None),
             Err(source) => Err(HawkError::io("lock daemon lifetime", path, source)),
         }
     }
@@ -194,6 +194,15 @@ impl StateStore {
             None => Ok(true),
         }
     }
+}
+
+fn lock_is_contended(error: &std::io::Error) -> bool {
+    if error.kind() == ErrorKind::WouldBlock {
+        return true;
+    }
+
+    let contended_raw_error = fs2::lock_contended_error().raw_os_error();
+    error.raw_os_error().is_some() && error.raw_os_error() == contended_raw_error
 }
 
 #[derive(Debug)]
@@ -374,6 +383,17 @@ mod tests {
         assert!(store.daemon_is_live().unwrap());
         drop(lock);
         assert!(!store.daemon_is_live().unwrap());
+    }
+
+    #[test]
+    fn recognizes_only_supported_lock_contention_errors() {
+        assert!(lock_is_contended(&fs2::lock_contended_error()));
+        assert!(lock_is_contended(&std::io::Error::from(
+            ErrorKind::WouldBlock
+        )));
+        assert!(!lock_is_contended(&std::io::Error::from(
+            ErrorKind::PermissionDenied
+        )));
     }
 
     #[cfg(unix)]
