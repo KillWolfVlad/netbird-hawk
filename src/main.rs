@@ -1,3 +1,4 @@
-fn main() {
-    println!("Hello, {}!", "World");
+#[tokio::main]
+async fn main() {
+    std::process::exit(netbird_hawk::cli::entrypoint().await);
 }

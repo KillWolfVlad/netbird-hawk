@@ -1,13 +1,38 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  Project: netbird-hawk
+
+  netbird-hawk is a background daemon written in Rust that helps users manage
+  NetBird SSO authentication. A NetBird SSO session lasts approximately 24
+  hours from the moment of login. If a user authenticates in the middle of a
+  workday, the session can expire at the same inconvenient time on the next
+  day. The product should make re-authentication predictable and prevent an
+  avoidable, unexpected interruption during active use.
+
+  The daemon must support macOS, Windows, and Linux as first-class platforms.
+  Designs must account for platform-specific service management, filesystem
+  locations, process handling, and user-session behavior without making one OS
+  the implicit default. Platform-specific code should be isolated behind
+  shared abstractions wherever practical.
+
+  The daemon normally runs unattended. Any interactive SSO step must be
+  initiated deliberately and communicated clearly to the user. Scheduling and
+  state transitions must remain correct across daemon restarts, system sleep,
+  clock or timezone changes, temporary loss of network connectivity, and
+  repeated execution. Recovery operations should be idempotent and should not
+  create login/logout loops.
+
+  Treat authentication data as sensitive. Never log credentials, session
+  tokens, cookies, authorization codes, or secrets. Persist only the minimum
+  state required, use OS-appropriate secure storage when secrets are
+  unavoidable, and run with the least privileges necessary.
+
+  Keep the core scheduling and session-management logic independent from OS
+  integrations and external commands so it can be tested deterministically.
+  Specifications must define observable behavior, failure handling, and
+  cross-platform implications. Do not assume undocumented NetBird behavior;
+  record such assumptions explicitly and verify them before implementation.
 
 # Per-artifact rules (optional)
 # Add custom rules for specific artifacts.
